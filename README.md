@@ -3,11 +3,11 @@ Platform managing job offers written with php/laravel
 ## Architecture
 ```mermaid
 ---
-jobbiz architecture
+title: jobbiz architecture
 ---
 erDiagram
-    COMPANY ||--o{ JOB : belongs to
-    COMPANY }|--|{ USER : has
+    COMPANY ||--o{ JOB : "has"
+    COMPANY }|--|{ USER : "has"
     COMPANY {
         string name
         string address
