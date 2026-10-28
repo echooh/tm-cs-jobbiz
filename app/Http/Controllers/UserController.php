@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -13,6 +14,8 @@ class UserController extends Controller
      */
     public function index()
     {
+        Gate::authorize('viewAny', User::class);
+
         $users = User::paginate(15);
         return $users->toJson();    
     }
