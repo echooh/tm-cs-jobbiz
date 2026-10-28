@@ -15,3 +15,11 @@ test('a new user can be created', function () {
     $response->assertCreated();
     $this->assertDatabaseHas('users', ['email' => $payload['email']]);
 });
+
+test('get /api/users shows a list of users', function () {
+    $users = User::factory()->count(5)->create();
+    
+    $this->getJson('/api/users')
+        ->assertOk()
+        ->assertJsonCount(5, 'data');    
+});
