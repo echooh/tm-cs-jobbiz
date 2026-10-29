@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Http\Request;
 
@@ -25,9 +26,12 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request)
     {
+        Gate::authorize('create', User::class);
+
         $validated = $request->validated();
         $user = User::create($validated);
-        return $user;
+
+        return new UserResource($user);
     }
 
     /**
