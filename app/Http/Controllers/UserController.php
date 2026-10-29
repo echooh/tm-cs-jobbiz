@@ -52,7 +52,7 @@ class UserController extends Controller
     {
         Gate::authorize('update', $user);
 
-        $validated = $request->validate();
+        $validated = $request->validated();
 
         $user->update($validated);
 
