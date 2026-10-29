@@ -64,10 +64,10 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        Gate::authorize('delete', User::class);
+        Gate::authorize('delete', $user);
 
         $user->delete();
 
-        return new UserResource($user);
+        return response()->noContent();
     }
 }
