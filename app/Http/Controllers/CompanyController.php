@@ -40,7 +40,9 @@ class CompanyController extends Controller
      */
     public function show(Company $company)
     {
+        Gate::authorize('view', $company);
 
+        return new CompanyResource($company); 
     }
 
     /**
