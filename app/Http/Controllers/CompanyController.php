@@ -25,7 +25,14 @@ class CompanyController extends Controller
      */
     public function store(StoreCompanyRequest $request)
     {
-        
+        Gate::authorize('create', Company::class);        
+    
+        $validated = $request->validated();
+
+        $company = Company::create($validated);
+        $company->users()->attach($request->user());
+
+        return (new CompanyResource($company))->response()->setStatusCode(201);
     }
 
     /**
@@ -33,7 +40,7 @@ class CompanyController extends Controller
      */
     public function show(Company $company)
     {
-        //
+
     }
 
     /**
