@@ -72,3 +72,14 @@ test('update doesnt take a website thats already in use by another company', fun
     $this->putJson("/api/companies/{$company->id}", ['website' => 'https://www.in-use.com'])
         ->assertInvalid('website');
 });
+
+test('delete removes company entry from database', function () {
+    Sanctum::actingAs(User::factory()->create());
+
+    $company = Company::factory()->create();
+
+    $this->deleteJson("/api/companies/{$company->id}")
+        ->assertNoContent();
+
+    $this->assertDatabaseMissing('companies', ['id' => $company->id]);
+});
