@@ -28,7 +28,7 @@ test('store creates new company', function () {
 
     $request = $this->postJson('/api/companies', $payload);
     $request->assertCreated();
-    
+
     $this->assertDatabaseHas('companies', ['website' => $payload['website']]);
 });
 
@@ -41,4 +41,34 @@ test('show returns the correct company', function () {
 
     $this->getJson("/api/companies/{$thirdCompany->id}")
         ->assertOk();
+});
+
+test('update changes property values of company', function () {
+    Sanctum::actingAs(User::factory()->create());
+
+    $company = Company::factory()->create();
+
+    $payload = [
+        'name' => 'different name',
+        'description' => 'one hellova description',
+        'website' => 'https://www.new-website.com',
+    ];
+
+    $this->putJson("/api/companies/{$company->id}", $payload)
+        ->assertOk();
+
+    $this->assertDatabaseHas('companies',[
+        'id' => $company->id,
+        'website' => 'https://www.new-website.com',
+    ]);
+});
+
+test('update doesnt take a website thats already in use by another company', function () {
+    Sanctum::actingAs(User::factory()->create());
+
+    $company = Company::factory()->create();
+    $company2 = Company::factory()->create(['website' => 'https://www.in-use.com']);
+
+    $this->putJson("/api/companies/{$company->id}", ['website' => 'https://www.in-use.com'])
+        ->assertInvalid('website');
 });
