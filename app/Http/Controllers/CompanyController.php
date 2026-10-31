@@ -25,8 +25,8 @@ class CompanyController extends Controller
      */
     public function store(StoreCompanyRequest $request)
     {
-        Gate::authorize('create', Company::class);        
-    
+        Gate::authorize('create', Company::class);
+
         $validated = $request->validated();
 
         $company = Company::create($validated);
@@ -42,7 +42,7 @@ class CompanyController extends Controller
     {
         Gate::authorize('view', $company);
 
-        return new CompanyResource($company); 
+        return new CompanyResource($company);
     }
 
     /**
@@ -50,7 +50,13 @@ class CompanyController extends Controller
      */
     public function update(UpdateCompanyRequest $request, Company $company)
     {
-        //
+        Gate::authorize('update', $company);
+
+        $validated = $request->validated();
+
+        $company->update($validated);
+
+        return new CompanyResource($company);
     }
 
     /**
