@@ -64,6 +64,10 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        //
+        Gate::authorize('delete', $company);
+
+        $company->delete();
+
+        return response()->noContent();
     }
 }
