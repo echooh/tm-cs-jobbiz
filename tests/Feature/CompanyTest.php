@@ -44,9 +44,11 @@ test('show returns the correct company', function () {
 });
 
 test('update changes property values of company', function () {
-    Sanctum::actingAs(User::factory()->create());
+    $user = User::factory()->create();
+    Sanctum::actingAs($user);
 
     $company = Company::factory()->create();
+    $company->users()->attach($user);
 
     $payload = [
         'name' => 'different name',
@@ -64,9 +66,11 @@ test('update changes property values of company', function () {
 });
 
 test('update doesnt take a website thats already in use by another company', function () {
-    Sanctum::actingAs(User::factory()->create());
+    $user = User::factory()->create();
+    Sanctum::actingAs($user);
 
     $company = Company::factory()->create();
+    $company->users()->attach($user);
     $company2 = Company::factory()->create(['website' => 'https://www.in-use.com']);
 
     $this->putJson("/api/companies/{$company->id}", ['website' => 'https://www.in-use.com'])
@@ -74,12 +78,46 @@ test('update doesnt take a website thats already in use by another company', fun
 });
 
 test('delete removes company entry from database', function () {
-    Sanctum::actingAs(User::factory()->create());
+    $user = User::factory()->create();
+    Sanctum::actingAs($user);
 
     $company = Company::factory()->create();
+    $company->users()->attach($user);
 
     $this->deleteJson("/api/companies/{$company->id}")
         ->assertNoContent();
 
     $this->assertDatabaseMissing('companies', ['id' => $company->id]);
+});
+
+test('a user not in the company cannot use update on that company', function () {
+    $member = User::factory()->create();
+    $nonmember = User::factory()->create();
+
+    Sanctum::actingAs($member);
+
+    $company = Company::factory()->create();
+    $company->users()->attach($member);
+
+    Sanctum::actingAs($nonmember);
+
+    $this->putJson("/api/companies/{$company->id}", ['website' => 'https://www.something-else.com'])
+        ->assertForbidden();
+
+});
+
+test('a user not in the company cannot use delete on that company', function() {
+    $member = User::factory()->create();
+    $nonmember = User::factory()->create();
+
+    Sanctum::actingAs($member);
+
+    $company = Company::factory()->create();
+    $company->users()->attach($member);
+
+    Sanctum::actingAs($nonmember);
+    $this->deleteJson("/api/companies/{$company->id}")
+        ->assertForbidden();
+
+    $this->assertDatabaseHas('companies', ['id' => $company->id]);
 });

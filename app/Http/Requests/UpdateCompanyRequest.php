@@ -24,7 +24,7 @@ class UpdateCompanyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
             'website' => ['nullable', 'url:http,https', Rule::unique('companies', 'website')->ignore($this->route('company')), 'max:255'],
         ];
