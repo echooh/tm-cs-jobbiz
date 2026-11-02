@@ -37,8 +37,7 @@ class CompanyPolicy
      */
     public function update(User $user, Company $company): bool
     {
-        // @TODO
-        return true;
+        return $company->hasMember($user);
     }
 
     /**
@@ -46,8 +45,7 @@ class CompanyPolicy
      */
     public function delete(User $user, Company $company): bool
     {
-        // @TODO
-        return true;
+        return $company->hasMember($user);
     }
 
     /**
