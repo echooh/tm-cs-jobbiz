@@ -11,9 +11,9 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-    public function register(UserStoreRequest $request)
+    public function register(StoreUserRequest $request)
     {
-        $user = User::create($request->validated($request));
+        $user = User::create($request->validated());
 
         return response()->json([
             'data' => new UserResource($user),
